@@ -3,7 +3,7 @@
 JanitorAI의 캐릭터 카드(PNG)와 로어북(Scripts)을 **폰의 Termux에서 돌리는 SillyTavern**으로 바로 가져오는 도구입니다.
 
 > 💻 PC용은 별도 저장소입니다: https://github.com/Hati1004/Janitor-Enhanced-Import
-> 이 저장소는 **Termux 전용**이며, 두 저장소를 같은 SillyTavern에 같이 설치하지 마세요(서로 충돌합니다).
+> 이 저장소는 **Termux (안드로이드)전용**이며, 두 저장소를 같은 SillyTavern에 같이 설치하지 마세요(서로 충돌합니다).
 
 ## PC 버전과 다른 점
 - **`sharp` 설치가 필요 없습니다.** (Termux에선 설치가 안 됨) webp→PNG 변환을 SillyTavern에 내장된 jimp(WASM)가 처리합니다.
