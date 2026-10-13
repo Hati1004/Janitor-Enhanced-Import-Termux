@@ -59,7 +59,7 @@ cd ~/Janitor-Enhanced-Import-Termux && git pull && bash install-termux.sh
    ```
 2. 설치를 누르면 끝. (ST 주소 기본값 `http://127.0.0.1:8000` 그대로 사용)
 
-### 3. ST 확장 패널 (선택)
+### 3. ST 확장 패널 
 ST → Extensions → Install Extension → 이 저장소 URL. 안내 패널만 추가되며 없어도 동작합니다.
 
 ## 사용법
