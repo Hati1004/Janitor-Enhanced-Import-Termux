@@ -1,6 +1,6 @@
 # JanitorAI Enhanced Importer — Termux(안드로이드) 버전
 
-JanitorAI의 캐릭터 카드(PNG)와 로어북(Scripts)을 **폰의 Termux에서 돌리는 SillyTavern**으로 바로 가져오는 도구입니다.
+JanitorAI의 캐릭터 카드(PNG)와 로어북을 **폰의 Termux에서 돌리는 SillyTavern**으로 바로 가져오는 도구입니다.
 
 > 💻 PC용은 별도 저장소입니다: https://github.com/Hati1004/Janitor-Enhanced-Import
 > 이 저장소는 **Termux (안드로이드)전용**이며, 두 저장소를 같은 SillyTavern에 같이 설치하지 마세요(서로 충돌합니다).
@@ -28,13 +28,15 @@ JanitorAI의 캐릭터 카드(PNG)와 로어북(Scripts)을 **폰의 Termux에�
 
 ### 1. 플러그인 (Termux)
 ```bash
-pkg install git          # 처음이라면
+pkg install git
 cd ~
 git clone https://github.com/Hati1004/Janitor-Enhanced-Import-Termux
 cd Janitor-Enhanced-Import-Termux
-bash install-termux.sh                 # ST가 ~/SillyTavern 이면 이대로
-# bash install-termux.sh /경로/SillyTavern   # 다른 위치면 경로 지정
+bash install-termux.sh
 ```
+- `pkg install git`은 git이 처음이라면 필요합니다. 이미 있으면 건너뛰세요.
+- ST가 `~/SillyTavern`에 있으면 `bash install-termux.sh`만 실행하면 됩니다. 다른 위치라면 `bash install-termux.sh /실제/SillyTavern/경로`처럼 경로를 뒤에 붙이세요.
+
 스크립트가 하는 일:
 - `plugins/janitor.cjs` 복사
 - 예전 방식으로 설치된 `janitor.js`가 있으면 제거
@@ -93,7 +95,7 @@ Tampermonkey 메뉴의 **🔍 저장된 토큰 상태 확인**으로 저장 여�
 > 사이트 보안 설정(CSP)에 따라 B는 막힐 수 있습니다. 그땐 A를 쓰세요.
 
 복사한 값은 Tampermonkey 메뉴의 **🔑 JanitorAI 토큰 재설정**에 붙여넣으면 됩니다.
-토큰은 **비밀번호와 같으니 남에게 공유하지 마세요.**
+토큰은 **비밀번호와 같으니 AI, 남에게 공유하지 마세요.**
 
 ## 문제 해결
 | 증상 | 해결 |
