@@ -72,7 +72,31 @@ cd ~/Janitor-Enhanced-Import-Termux && git reset --hard && git pull && bash inst
 3. **캐릭터 페이지**에서 `📤 ST로 보내기` → ST 캐릭터 목록에 저장됩니다. (안 보이면 새로고침)
 4. **로어북(Scripts) 편집 페이지**에서 `📚 로어북 ST로 보내기` → 이름을 확인하면 World Info에 추가됩니다.
 
-### 정의가 비공개인 캐릭터
+---
+
+**업데이트할 때:**
+```bash
+cd ~/Janitor-Enhanced-Import-Termux && git reset --hard && git pull && bash install-termux.sh
+```
+---
+
+## 삭제
+Termux에서 아래를 실행한 뒤 ST를 재시작하세요.
+```bash
+rm -f ~/SillyTavern/plugins/janitor.cjs
+rm -rf ~/SillyTavern/public/scripts/extensions/third-party/Janitor-Enhanced-Import
+cd ~ && rm -rf ~/Janitor-Enhanced-Import-Termux
+```
+
+- **유저스크립트:** Firefox → Tampermonkey 대시보드 → "Janitor Enhanced Import (Termux)" 삭제. 저장된 토큰과 ST 주소도 함께 지워집니다.
+- 설치 스크립트가 켠 `enableServerPlugins`는 다른 서버 플러그인이 쓸 수 있어 그대로 둡니다. 다른 플러그인을 쓰지 않는다면 아래로 끌 수 있습니다.
+  ```bash
+  sed -i 's/^enableServerPlugins:.*/enableServerPlugins: false/' ~/SillyTavern/config.yaml
+  ```
+
+  ---
+
+  ### 정의가 비공개인 캐릭터
 작가가 "character definition is hidden"으로 정의를 숨긴 캐릭터는 사이트가 설명/첫 인사말을 내려주지 않습니다. 이 경우:
 - 사이트의 **공개 소개글은 ST의 캐릭터 설명칸이 아니라 제작자 메모(Creator's Notes)** 에 들어갑니다.
 - datacat/JannyAI에 저장본이 있으면 그것으로 빈칸을 채우려고 시도합니다.
@@ -88,29 +112,7 @@ grep -n -A8 globalSelect ~/SillyTavern/data/default-user/settings.json
 
 ## JanitorAI 토큰
 **대부분 신경 쓸 필요 없습니다.** 로그인한 상태로 janitorai.com을 한두 페이지 둘러보면 스크립트가 알아서 토큰을 저장합니다. 자동 감지가 안 되면 전송 버튼을 눌렀을 때 수동 입력 창이 뜹니다.
-Tampermonkey 메뉴의 **🔍 저장된 토큰 상태 확인**으로 저장 여부를 볼 수 있습니다.
-
-### 수동으로 구하기 (자동 감지가 안 될 때)
-폰에는 F12가 없어서 아래 방법 중 하나를 씁니다.
-
-**방법 A. 북마클릿 (가장 간단)**
-1. 아무 페이지나 북마크하고, 북마크 주소를 아래 한 줄로 바꿉니다.
-   ```
-   javascript:(function(){var f=window.fetch;window.fetch=function(i,o){try{var h=(o&&o.headers)||{};var a=h.Authorization||h.authorization||(h.get&&h.get('Authorization'));if(a&&/^Bearer /i.test(a)){prompt('토큰 (복사하세요)',a.replace(/^Bearer /i,''))}}catch(e){}return f.apply(this,arguments)};alert('감지 시작: 이제 사이트에서 아무 페이지나 눌러 보세요')})();
-   ```
-2. 로그인한 janitorai.com에서 이 북마크를 실행 → 사이트 안에서 다른 페이지로 이동하면 토큰이 입력창에 떠서 복사할 수 있습니다.
-
-**방법 B. Eruda(모바일 개발자도구)**
-1. janitorai.com에서 북마클릿으로 실행:
-   ```
-   javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init()}})();
-   ```
-2. 우측 하단 톱니 → **Network** 탭 → 요청 선택 → Headers의 `authorization: Bearer ...`에서 `Bearer ` 뒤 값 복사.
-
-> 사이트 보안 설정(CSP)에 따라 B는 막힐 수 있습니다. 그땐 A를 쓰세요.
-
-복사한 값은 Tampermonkey 메뉴의 **🔑 JanitorAI 토큰 재설정**에 붙여넣으면 됩니다.
-토큰은 **비밀번호와 같으니 남에게 공유하지 마세요.**
+Tampermonkey 메뉴의 **🔍 저장된 토큰 상태 확인**으로 저장 여부를 볼 수 있습니다. 토큰은 **비밀번호와 같으니 남에게 공유하지 마세요.**
 
 ## 문제 해결
 | 증상 | 해결 |
@@ -127,11 +129,6 @@ Tampermonkey 메뉴의 **🔍 저장된 토큰 상태 확인**으로 저장 여�
 ## CSRF 에러가 날 때
 ST의 CSRF 보호는 **다른 웹사이트가 내 로컬 ST에 몰래 요청을 보내는 것을 막는 보안 장치**입니다. 기본 설정(`disableCsrfProtection: false`)이 보호가 켜진 상태이고, 대부분은 그대로 잘 동작합니다.
 
-에러가 날 때는 이 순서로 하세요.
-1. Firefox의 **쿠키/추적 차단 설정**을 완화해 보세요. 로컬 서버 쿠키가 차단되면 CSRF 확인이 실패할 수 있습니다.
-2. 그래도 안 되면 **임시로만** `config.yaml`에서 `disableCsrfProtection: true`로 바꾸고 ST를 재시작한 뒤, **캐릭터를 가져오고 나서 바로 `false`로 되돌리세요.**
-   - ST가 폰 안에서만 열려 있을 때(`listen: false`)에만 하세요.
-   - 켜둔 채로 다른 사이트를 돌아다니면 위험합니다. 그 사이트가 내 ST에 요청을 보낼 수 있게 되기 때문입니다.
 
 ## 주의사항
 JanitorAI의 비공식 API/페이지 구조에 의존합니다. 사이트 구조가 바뀌면 일부 기능이 동작하지 않을 수 있습니다.
