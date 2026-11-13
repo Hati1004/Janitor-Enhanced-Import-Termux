@@ -212,6 +212,44 @@ function stripJanitorCredit(card) {
     if (total) console.log(`[Janitor] 재니터 크레딧 문구 ${total}곳 제거 (${where.join(', ')})`);
 }
 
+// ── {{obj}} / {{sub}} / {{poss}} → {{user}} 치환 ─────────────────────
+// 재니터 카드에는 유저 대명사 매크로({{sub}} {{obj}} {{poss}})가 들어 있는 경우가 있는데,
+// ST에는 이 매크로가 없어 그대로 글자로 노출된다. 가져올 때 {{sub}} {{obj}}는 {{user}}로,
+// 소유격인 {{poss}}는 {{user}}'s 로 바꾼다.
+// (대소문자/공백 변형 {{ Obj }} {{SUB}} 도 처리) 끄고 싶으면 false 로 바꾸면 된다.
+const REPLACE_PRONOUN_MACROS = true;
+const PRONOUN_MACRO_TEST_RE = /\{\{\s*(?:obj|sub|poss)\s*\}\}/i;
+const PRONOUN_MACRO_RE      = /\{\{\s*(?:obj|sub|poss)\s*\}\}/gi;
+
+function replacePronounMacrosIn(s) {
+    if (typeof s !== 'string' || !PRONOUN_MACRO_TEST_RE.test(s)) return { text: s, n: 0 };
+    let n = 0;
+    const text = s.replace(PRONOUN_MACRO_RE, (m) => {
+        n++;
+        return /poss/i.test(m) ? "{{user}}'s" : '{{user}}';
+    });
+    return { text, n };
+}
+
+function replacePronounMacros(card) {
+    if (!REPLACE_PRONOUN_MACROS || !card || !card.data) return;
+    const d = card.data;
+    let total = 0;
+    const where = [];
+    for (const k of ['description', 'personality', 'scenario', 'first_mes', 'mes_example', 'system_prompt', 'post_history_instructions']) {
+        const r = replacePronounMacrosIn(d[k]);
+        if (r.n) { d[k] = r.text; total += r.n; where.push(`${k}×${r.n}`); }
+    }
+    if (Array.isArray(d.alternate_greetings)) {
+        d.alternate_greetings = d.alternate_greetings.map((g, i) => {
+            const r = replacePronounMacrosIn(g);
+            if (r.n) { total += r.n; where.push(`alternate_greetings[${i}]×${r.n}`); }
+            return r.text;
+        });
+    }
+    if (total) console.log(`[Janitor] {{obj}}/{{sub}}→{{user}}, {{poss}}→{{user}}'s 치환 ${total}곳 (${where.join(', ')})`);
+}
+
 function init(router) {
     console.log("================================================");
     console.log("[Janitor 플러그인] 🟢 백엔드 서버 완벽 로드 완료!");
@@ -516,6 +554,7 @@ function init(router) {
         }
         console.log(`[Janitor] 카드 변환: spec=${card.spec} v=${card.spec_version} (소스: ${source})`);
         stripJanitorCredit(card);
+        replacePronounMacros(card);
 
         // V2 카드를 PNG에 다시 임베드 (chara + ccv3 둘 다 교체하여 충돌 방지)
         const newB64 = Buffer.from(JSON.stringify(card), 'utf8').toString('base64');
